@@ -13,5 +13,10 @@
 		"svelte": "^4.0.5",
 		"vite": "^4.4.2"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"bcrypt": "^5.1.1",
+		"better-sqlite3": "^8.7.0",
+		"uuid": "^9.0.1"
+	}
 }

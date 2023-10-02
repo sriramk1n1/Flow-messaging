@@ -5,26 +5,31 @@
 </script>
 
 <div style="display: flex; justify-content:center">
-    <h3> Login </h3>
+    <h3> Register </h3>
 </div>
-<div class="container">
+<div class="container" id="new">
+    {#if form?.success==true}
+       <p style="color:green">{form?.message || ""}</p>
+    {:else if form?.success==false}
+        <p style="color:red">{form?.message || ""}</p>
+    {/if}
     <form method="POST" use:enhance>
-        <div>
-            {form?.message || ""}
+        <div class="in">
+            <input type="text" placeholder="name" name="username" value={form?.username || ""}>
         </div>
         <div class="in">
             <input type="email" placeholder="email" name="email" value={form?.email || ""}>
         </div>
         <div class="in">
-            <input type="password" placeholder="password" name="password">
+            <input type="password" placeholder="password" name="password" >
         </div>
         <div class="in">
-            <button type="submit"> Login </button>
-            <button><a href="/register">Sign Up as new User</a></button>
-
+            <button type="submit"> Register </button>
+            <button><a href="/login">Existing user?</a></button>
         </div>
     </form>
 </div>
+
 
 <style>
     .container {
