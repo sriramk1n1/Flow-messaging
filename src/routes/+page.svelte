@@ -1,29 +1,27 @@
 <script>
-	import { redirect } from "@sveltejs/kit";
-	import { json } from "@sveltejs/kit";
 	import { enhance } from "$app/forms";
 	import { onMount } from "svelte";
-	// import { WebSocket } from 'ws';
 	export let data;
 	export let form;
+	let ws;
 	let conversation;
 	let sender = data.res.email;
 	let receiver;
+	
+	
+	onMount(()=>{
+		ws = new WebSocket('ws://localhost:9000');
+		ws.onmessage = (event) => {
+      	console.log(event.data);
+		conversation = JSON.parse(event.data);
+    };
+	window.addEventListener("beforeunload", function () {
+    if(ws.readyState == WebSocket.OPEN)
+        ws.close();
+	});
+	});
 
-	const updateconversation = async () => {
-		if (receiver) {
-			console.log(receiver);
-			let c = await fetch("http://localhost:8080/conversation", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json", // Specify the content type as JSON
-				},
-				body: JSON.stringify({ receiver }), // Convert the data object to JSON
-			});
-			conversation = await c.json();
-		}
-	};
-	setInterval(updateconversation, 1000);
+	// setInterval(updateconversation, 1000);
 	$: data.convlist = form?.convlist ? form.convlist : data.convlist;
 </script>
 <div class="body-container">
@@ -41,6 +39,7 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="chat-item" on:click={()=>{
 						receiver=obj.receiver;
+						ws.send(JSON.stringify({receiver,sender}));
 					}
 					} class:selected={receiver == obj.receiver}>
 					  <div class="user-avatar">
@@ -109,6 +108,8 @@
 							return async ({ result, update }) => {
 								// `result` is an `ActionResult` object
 								update();
+								ws.send(JSON.stringify({receiver,sender}));
+
 								// `update` is a function which triggers the default logic that would be triggered if this callback wasn't set
 							};
 						}}
@@ -116,7 +117,7 @@
 						<div class="espace"></div>
 			<input type="text" class="modern-input2" placeholder="Type your message..." name="message">
 			<div class="rightspace">
-				<button class="send-button" type="submit">Send</button>
+				<button class="send-button" type="submit" >Send</button>
 			</div>
 			</form>
 			
@@ -146,7 +147,9 @@
   display: flex; /* Use flex layout to arrange sidebar and content */
   min-height: 100vh;
 }	
-
+.selected{
+	border: 1px solid green;
+}
 /* Sidebar */
 .sidebar {
 	background-color:aliceblue;
