@@ -1,10 +1,14 @@
 import { fail, redirect } from '@sveltejs/kit';
 import Database from 'better-sqlite3';
 import { getuserdetails } from '../lib/getuserfromsession';
+
 export const load = async({ request, cookies }) => {
 	if (!cookies.get("access")) {
 		throw redirect(307, '/login');
 	}else{
+
+		
+
 		const db = new Database('src/lib/my.db',{verbose:console.log});
 		const res = await getuserdetails(cookies.get("session"))
 		const r3 = db.prepare("SELECT receiver from hadconversationswith where sender=(?)");
@@ -39,12 +43,14 @@ export const actions = {
 				return;
 			}
 			return {
+				success: true,
 				convlist: db.prepare("SELECT receiver FROM hadconversationswith WHERE sender=(?)").all(userfrom)
 			}
 		}catch(e){
 			console.log(e);
 			return fail(400,{
-				message: "User does not exist"
+				success: false,
+				umessage: "User does not exist"
 			});
 		}
 		
@@ -52,13 +58,14 @@ export const actions = {
 	message: async({request,cookies}) => {
 		const t = await request.formData();
 		const message = t.get("message");
+		console.log("RECEIIIIIIIIIIIIIIVED ",message)
 		const receiver = t.get("receiver");
 		const t1 = await getuserdetails(cookies.get("session"));
 		const sender = t1.email;
 		const db = new Database('src/lib/my.db',{verbose:console.log});
 		const r1 = db.prepare('INSERT INTO conversations (sender,receiver,timestamp,message) values (?,?,?,?)');
 		r1.run(sender,receiver,new Date().toLocaleString(),message)
-		return{
+		return {
 			status:"sent",
 			message:message,
 			receiver:receiver

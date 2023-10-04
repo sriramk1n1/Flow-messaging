@@ -40,11 +40,12 @@ let getdbdetails = () => {
 
 const deleteall = () => {
     const db= new Database('my.db', {verbose: console.log});
-    db.exec("DELETE from users")
-    db.exec("DELETE from hadconversationswith")
-    db.exec("DELETE from conversation")
-    db.exec("DELETE from session")
+    // db.exec("DELETE from users")
+    // db.exec("DELETE from hadconversationswith")
+    db.exec("DELETE from conversations")
+    // db.exec("DELETE from session")
     db.close()
 }
 
 
+deleteall();
