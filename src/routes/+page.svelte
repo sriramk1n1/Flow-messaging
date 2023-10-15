@@ -7,20 +7,25 @@
 	let conversation;
 	let sender = data.res.email;
 	let receiver;
-	
+	let mobileview=false;
 	
 	onMount(()=>{
 		ws = new WebSocket('ws://localhost:9000');
 		ws.onmessage = (event) => {
       	console.log(event.data);
 		conversation = JSON.parse(event.data);
+		
     };
 	window.addEventListener("beforeunload", function () {
-    if(ws.readyState == WebSocket.OPEN)
+		if(ws.readyState == WebSocket.OPEN)
         ws.close();
-	});
-	});
+});
+});
+let func4 = (e) => {
+		mobileview=!mobileview;
+		
 
+	}
 	// setInterval(updateconversation, 1000);
 	$: data.convlist = form?.convlist ? form.convlist : data.convlist;
 </script>
@@ -55,6 +60,39 @@
 			{/each}
 		</div>		
 	</div>
+	<div class="mobile" class:mobilemenu={mobileview} class:mobilemenuhidden={mobileview}>
+		<div class="msidebar">
+			<div class="input-container" style="padding:10px">
+				<form method="post" use:enhance action="?/adduser">
+					<input type="text" class="modern-input" placeholder="Add users..." name=adduser>
+				</form>
+			</div>	
+			<div class="conversations" style="padding: 10px">
+	
+				{#each data?.convlist || [] as obj}
+					<div class="chat-list" >
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						<div class="chat-item" on:click={()=>{
+							receiver=obj.receiver;
+							ws.send(JSON.stringify({receiver,sender}));
+							func4();
+						}
+						} class:selected={receiver == obj.receiver}>
+						  <div class="user-avatar">
+							<!-- <img src="user-avatar.jpg" alt="User Avatar"> -->
+						  </div>
+						  <div class="user-info">
+							<p class="user-name">{obj.receiver}</p>
+							<p class="last-message">Hello there!</p>
+						  </div>
+						</div>
+						<!-- Add more chat items here as needed -->
+					</div>
+				{/each}
+			</div>		
+		</div>
+	</div>
 		<!-- <div>Conversations:</div>
 		<div>
 			With - {receiver}
@@ -72,16 +110,15 @@
 					</div>
 
 				</div>
-				<div class="messages">
+				<div class="messages" id="myele">
 
 					{#each conversation || [] as obj}
-					{JSON.stringify(obj)}
 					{#if obj.sender==sender}
-					<div class="Component" style=" margin: 10px; width: 200px; height: 40px; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+					<div class="Component" style=" margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<div class="Component" style="color: #10363F; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.message}</div>
 					</div>
 					{:else}
-					<div class="Properties" style="align-self:flex-start; width: 200px; height: 40px; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+					<div class="Properties" style="margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.message}</div>
 					</div>
 					{/if}
@@ -119,8 +156,10 @@
 			<div class="rightspace">
 				<button class="send-button" type="submit" >Send</button>
 			</div>
-			</form>
 			
+		</form>
+		
+		<div class="mobiletoggle"> <button on:click={func4}> Mobile button</button></div>
 						
 				<div>
 					{#if form?.status}
@@ -301,8 +340,39 @@
 }
 
 
+.mobile{
+	display:none;
+}
+.msidebar{
+	display:none;
+}
+.mobilemenu{
+	display: none;
+}
+.mobiletoggle{
+	display: none;
+}
 
-
-
+@media (max-width: 1026px) {
+    .sidebar {
+        display: none;
+    }
+	.mobile{
+	display:block;
+}
+.msidebar{
+	display:block;
+}
+.mobilemenu{
+	display: block;
+}
+.mobilemenuhidden{
+	display:none;
+}
+.mobiletoggle{
+	display: block;
+	float: left;
+}
+    }
 
 </style>
