@@ -14,13 +14,16 @@
 		ws.onmessage = (event) => {
       	console.log(event.data);
 		conversation = JSON.parse(event.data);
-		
+		scrollBodyToBottom();
     };
 	window.addEventListener("beforeunload", function () {
 		if(ws.readyState == WebSocket.OPEN)
         ws.close();
 });
 });
+function scrollBodyToBottom() {
+	document.documentElement.scrollTo(0,document.body.scrollHeight)
+}
 let func4 = (e) => {
 		mobileview=!mobileview;
 		
@@ -28,6 +31,7 @@ let func4 = (e) => {
 	}
 	// setInterval(updateconversation, 1000);
 	$: data.convlist = form?.convlist ? form.convlist : data.convlist;
+
 </script>
 <div class="body-container">
 	<div class="sidebar">
@@ -39,14 +43,14 @@ let func4 = (e) => {
 		<div class="conversations" style="padding: 10px">
 
 			{#each data?.convlist || [] as obj}
-				<div class="chat-list" >
+				<div class="chat-list" class:selected={receiver == obj.receiver}>
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="chat-item" on:click={()=>{
 						receiver=obj.receiver;
 						ws.send(JSON.stringify({receiver,sender}));
 					}
-					} class:selected={receiver == obj.receiver}>
+					} >
 					  <div class="user-avatar">
 						<!-- <img src="user-avatar.jpg" alt="User Avatar"> -->
 					  </div>
@@ -62,9 +66,9 @@ let func4 = (e) => {
 	</div>
 	<div class="mobile" class:mobilemenu={mobileview} class:mobilemenuhidden={mobileview}>
 		<div class="msidebar">
-			<div class="input-container" style="padding:10px">
+			<div class="input-container" style="padding:10px; width:100%">
 				<form method="post" use:enhance action="?/adduser">
-					<input type="text" class="modern-input" placeholder="Add users..." name=adduser>
+					<input type="text" style="width:100%" class="modern-input" placeholder="Add users..." name=adduser>
 				</form>
 			</div>	
 			<div class="conversations" style="padding: 10px">
@@ -98,8 +102,8 @@ let func4 = (e) => {
 			With - {receiver}
 		</div> -->
 		
-	<div class="content">
-		<a href="/logout"> Logout </a>
+	<div class="content" class:c2={!mobileview}>
+		<!-- <a href="/logout"> Logout </a>
 				<div class="top-bar">
 					<div class="other-users">
 						<div class="texts">
@@ -107,8 +111,20 @@ let func4 = (e) => {
 								{receiver || ""}
 							</div>
 						</div>
+					</div> -->
+
+				<!-- </div> -->
+				<div class="topbar" >
+					<div class="mobiletoggle" >
+						<img width=20px height=20px src="menu.png" on:click={func4}>
 					</div>
 
+					<div style="flex:4; text-align:center ">
+						{receiver || ""}
+					</div>
+					<div>
+						<a href="/logout"> Logout </a>
+					</div>
 				</div>
 				<div class="messages" id="myele">
 
@@ -125,50 +141,44 @@ let func4 = (e) => {
 					{/each}
 					
 				</div>
-					
-			<form class="form2"
-						method="post"
-						use:enhance={({
-							formElement,
-							formData,
-							action,
-							cancel,
-							submitter,
-						}) => {
-							// `formElement` is this `<form>` element
-							formData.set("receiver", receiver);
-							// `formData` is its `FormData` object that's about to be submitted
-							// `action` is the URL to which the form is posted
-							// calling `cancel()` will prevent the submission
-							// `submitter` is the `HTMLElement` that caused the form to be submitted
-		
-							return async ({ result, update }) => {
-								// `result` is an `ActionResult` object
-								update();
-								ws.send(JSON.stringify({receiver,sender}));
+			<div class="footer">
 
-								// `update` is a function which triggers the default logic that would be triggered if this callback wasn't set
-							};
-						}}
-						action="?/message">
-						<div class="espace"></div>
-			<input type="text" class="modern-input2" placeholder="Type your message..." name="message">
-			<div class="rightspace">
-				<button class="send-button" type="submit" >Send</button>
-			</div>
+				<form class="form2"
+							method="post"
+							use:enhance={({
+								formElement,
+								formData,
+								action,
+								cancel,
+								submitter,
+							}) => {
+								// `formElement` is this `<form>` element
+								formData.set("receiver", receiver);
+								// `formData` is its `FormData` object that's about to be submitted
+								// `action` is the URL to which the form is posted
+								// calling `cancel()` will prevent the submission
+								// `submitter` is the `HTMLElement` that caused the form to be submitted
 			
-		</form>
-		
-		<div class="mobiletoggle"> <button on:click={func4}> Mobile button</button></div>
-						
-				<div>
-					{#if form?.status}
-						<div style="color:green">
-							{form?.status} -- {form?.message} to {form?.receiver}
-						</div>
-					{/if}
+								return async ({ result, update }) => {
+									// `result` is an `ActionResult` object
+									update();
+									ws.send(JSON.stringify({receiver,sender}));
+							
+
+	
+									// `update` is a function which triggers the default logic that would be triggered if this callback wasn't set
+								};
+							}}
+							action="?/message">
+							<div class="espace"></div>
+				<input type="text" class="modern-input2" placeholder="Type your message..." name="message">
+				<div class="rightspace">
+					<button class="send-button" type="submit" >Send</button>
 				</div>
-		</div>
+				
+			</form>
+			</div>		
+	</div>
 </div>
 <!-- <h3> <a href="/logout">Logout </a> </h3>
 <div>
@@ -187,7 +197,7 @@ let func4 = (e) => {
   min-height: 100vh;
 }	
 .selected{
-	border: 1px solid green;
+	border: 1px solid #6d00ff;
 }
 /* Sidebar */
 .sidebar {
@@ -197,13 +207,21 @@ let func4 = (e) => {
   flex: 5;
   flex-grow: 1;
   border-radius: 10px;
+  position: fixed;
+  height: 100vh;
 }
-
+.footer{
+	position: fixed;
+	display: absolute;
+	bottom:0px;
+	width:auto;  display:absolute; right:0px; left:220px;
+	background-color: white;
+}
 .input-container{
 	flex:2
 }
 .conversations {
-	flex:10
+	flex:10;
 }
 /* Content */
 .content {
@@ -212,8 +230,12 @@ let func4 = (e) => {
   flex-direction: column;
 }
 
-.top-bar{
+.topbar{
 	flex: 1;
+	background-color:aliceblue;
+	display: flex;
+	padding: 20px;
+	position:fixed; width:auto;  display:absolute; right:0px; left:220px
 }
 .messages{
 	flex:10;
@@ -221,6 +243,8 @@ let func4 = (e) => {
 	flex-direction: column;
 	justify-content:baseline;
 	align-items: end;
+	margin-top: 10vh;
+	margin-bottom: 10vh;
 }
 
 /* Modern input container */
@@ -291,7 +315,11 @@ let func4 = (e) => {
 
 
 
-
+:global(*){
+        box-sizing : border-box;
+        margin: 0;
+        padding: 0;
+    }
 
 
 
@@ -309,7 +337,6 @@ let func4 = (e) => {
   display: flex;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #ddd;
 }
 
 /* User Avatar */
@@ -353,18 +380,65 @@ let func4 = (e) => {
 	display: none;
 }
 
+
 @media (max-width: 1026px) {
+	.espace{
+		display: none;
+	}
+	.rightspace{
+		flex:4;
+		position: relative;
+	}
+	.modern-input2 {
+
+		flex: 8;
+		margin: 10px;
+		min-width: 40%;
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 10px;
+		font-size: 16px;
+		outline: none;
+		transition: border-color 0.3s;
+		}
+	.send-button {
+		position: absolute;
+		margin: 10px;
+		top: 0;
+		bottom: 0;
+		width: 80px;
+		background-color: #007bff;
+		color: #fff;
+		border: none;
+		border-radius: 10px;
+		padding: 10px 20px;
+		cursor: pointer;
+}
+	.topbar{
+		left:0px;
+	}
+	.footer{
+		left:0px;
+		align-items: center;
+	}
+	.c2{
+	display: none;
+}
     .sidebar {
         display: none;
     }
 	.mobile{
 	display:block;
+	width: 100%;
+	padding: 20px;
 }
 .msidebar{
 	display:block;
 }
 .mobilemenu{
 	display: block;
+	width: 100%;
+
 }
 .mobilemenuhidden{
 	display:none;
@@ -373,6 +447,7 @@ let func4 = (e) => {
 	display: block;
 	float: left;
 }
+
     }
 
 </style>

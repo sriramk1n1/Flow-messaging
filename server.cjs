@@ -25,7 +25,7 @@ const server = http.createServer((req, res) => {
       const wss = new WebSocket.Server({ server });
       wss.on('connection', (ws) => {
         console.log('Client connected');
-        const db = new Database('Flow-messaging/src/lib/my.db');
+        const db = new Database('src/lib/my.db');
         let senderid;
         ws.on('message', (message) => {
           console.log(`Received message: ${message}`);
