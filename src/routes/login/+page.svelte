@@ -12,7 +12,7 @@
     <form method="POST" use:enhance={() => {
         return async ({ update }) => {
             update();
-            grecaptcha.reset();
+            window.grecaptcha.reset();
         };
     }}>
         
