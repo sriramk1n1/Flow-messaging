@@ -40,7 +40,7 @@ let func4 = (e) => {
 				<input type="text" class="modern-input" placeholder="Add users..." name=adduser>
 			</form>
 		</div>	
-		<div class="conversations" style="padding: 10px">
+		<div class="conversations" style="padding: 10px;">
 
 			{#each data?.convlist || [] as obj}
 				<div class="chat-list" class:selected={receiver == obj.receiver}>
@@ -202,8 +202,6 @@ let func4 = (e) => {
 /* Sidebar */
 .sidebar {
 	background-color:aliceblue;
-  display: flex;
-  flex-direction: column;
   flex: 5;
   flex-grow: 1;
   border-radius: 10px;
@@ -325,7 +323,7 @@ let func4 = (e) => {
 
 /* Chat List Container */
 .chat-list {
-  margin-top: 60px; /* Adjust the margin to create space below the input */
+  margin-top: 5px; /* Adjust the margin to create space below the input */
   padding: 10px; /* Optional padding for the chat list */
   background-color: #fff; /* Add a background color for the chat list */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a shadow for a card-like effect */
