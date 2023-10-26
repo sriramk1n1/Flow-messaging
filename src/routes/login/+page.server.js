@@ -24,7 +24,7 @@ export const actions = {
         const options = {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `secret=${"6Lf8s84oAAAAABaWgzstAy6RS8PvWZShf9VxWqHJ"}&response=${data.get('g-recaptcha-response')}`
+            body: `secret=${""}&response=${data.get('g-recaptcha-response')}`
         };
 
         let captcha_ver_response = await fetch( 'https://www.google.com/recaptcha/api/siteverify', options );
