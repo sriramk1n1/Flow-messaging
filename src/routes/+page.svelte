@@ -10,7 +10,7 @@
 	let mobileview=false;
 	
 	onMount(()=>{
-		ws = new WebSocket('wss://chat.skapi.online/ws');
+		ws = new WebSocket('ws:localhost:9000');
 		ws.onmessage = (event) => {
       	console.log(event.data);
 		conversation = JSON.parse(event.data);
@@ -29,7 +29,6 @@ let func4 = (e) => {
 		
 
 	}
-	// setInterval(updateconversation, 1000);
 	$: data.convlist = form?.convlist ? form.convlist : data.convlist;
 
 </script>
@@ -52,14 +51,12 @@ let func4 = (e) => {
 					}
 					} >
 					  <div class="user-avatar">
-						<!-- <img src="user-avatar.jpg" alt="User Avatar"> -->
 					  </div>
 					  <div class="user-info">
 						<p class="user-name">{obj.receiver}</p>
 						<p class="last-message">Hello there!</p>
 					  </div>
 					</div>
-					<!-- Add more chat items here as needed -->
 				</div>
 			{/each}
 		</div>		
@@ -91,7 +88,6 @@ let func4 = (e) => {
 							<p class="last-message">Hello there!</p>
 						  </div>
 						</div>
-						<!-- Add more chat items here as needed -->
 					</div>
 				{/each}
 			</div>		
@@ -175,17 +171,14 @@ let func4 = (e) => {
 <!-- </div> -->
 
 <style>
-	/* Container for the entire layout */
-/* Container for the entire layout */
 .body-container {
   width: 100%;
-  display: flex; /* Use flex layout to arrange sidebar and content */
+  display: flex;
   min-height: 100vh;
 }	
 .selected{
 	border: 1px solid #6d00ff;
 }
-/* Sidebar */
 .sidebar {
 	background-color:aliceblue;
   flex: 5;
@@ -207,7 +200,6 @@ let func4 = (e) => {
 .conversations {
 	flex:10;
 }
-/* Content */
 .content {
   flex: 8;
   display: flex;
@@ -235,9 +227,8 @@ let func4 = (e) => {
 	left:220px;
 	right: 0px;
 	overflow: hidden;
+	padding: 10px;
 }
-
-/* Modern input container */
 
 
 
@@ -260,7 +251,6 @@ let func4 = (e) => {
   border-color: #007bff;
 }
 
-/* Modern input style */
 .espace{
 	flex:2;
 }
@@ -284,7 +274,6 @@ let func4 = (e) => {
 	flex:2;
 	position: relative;
 }
-/* Send button style */
 .send-button {
 	position: absolute;
 	margin: 10px;
@@ -313,47 +302,18 @@ let func4 = (e) => {
 
 
 
-/* Chat List Container */
 .chat-list {
-  margin-top: 5px; /* Adjust the margin to create space below the input */
-  padding: 10px; /* Optional padding for the chat list */
-  background-color: #fff; /* Add a background color for the chat list */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a shadow for a card-like effect */
+  margin-top: 5px; 
+  padding: 10px; 
+  background-color: #fff; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   border-radius: 8px;
 }
 
-/* Chat Item */
 .chat-item {
   display: flex;
   align-items: center;
   padding: 10px;
-}
-
-/* User Avatar */
-.user-avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-/* User Info */
-.user-info {
-  flex-grow: 1;
-}
-
-/* User Name */
-.user-name {
-  font-weight: bold;
-  font-size: 16px;
-  margin: 0;
-}
-
-/* Last Message */
-.last-message {
-  font-size: 14px;
-  margin: 0;
-  color: #777;
 }
 
 

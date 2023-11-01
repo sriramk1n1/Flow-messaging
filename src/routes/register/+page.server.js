@@ -1,9 +1,9 @@
-import { register } from '$lib/register';
 import { fail } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
+import { RECAPTCHA_SECRET } from "$env/static/private"
 
 export const actions = {   
-    default: async ({request}) => {
+    register: async ({request}) => {
         let data = await request.formData();  
         
         if (!data.get("username")){
@@ -36,11 +36,13 @@ export const actions = {
       const options = {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `secret=${"6Lf8s84oAAAAABaWgzstAy6RS8PvWZShf9VxWqHJ"}&response=${data.get('g-recaptcha-response')}`
+        body: `secret=${RECAPTCHA_SECRET}&response=${data.get('g-recaptcha-response')}`
     };
 
     let captcha_ver_response = await fetch( 'https://www.google.com/recaptcha/api/siteverify', options );
     captcha_ver_response = await captcha_ver_response.json();
+
+    console.log(captcha_ver_response)
     if(captcha_ver_response.success==false){
         console.log('here')
         return fail(400,{ 
@@ -55,5 +57,7 @@ export const actions = {
             success: res===0?true:false, 
             message: res==0?"Registered successfully, You can login now.":"User already exists", 
         } 
-    }  
+    },
+  
+  
 };

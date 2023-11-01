@@ -1,9 +1,13 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { verifyuser } from "$lib/verify";
 import { createsession } from "$lib/createsession";
+import { RECAPTCHA_SECRET } from "$env/static/private"
+import {SECRET_CLIENT_ID,SECRET_CLIENT_SECRET} from "$env/static/private"
+import { OAuth2Client } from 'google-auth-library';
+
 
 export const actions = {   
-    default: async ({request, cookies}) => {
+    login: async ({request, cookies}) => {
         let data = await request.formData();
         console.log(data)
 
@@ -24,11 +28,13 @@ export const actions = {
         const options = {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `secret=${"6Lf8s84oAAAAABaWgzstAy6RS8PvWZShf9VxWqHJ"}&response=${data.get('g-recaptcha-response')}`
+            body: `secret=${RECAPTCHA_SECRET}&response=${data.get('g-recaptcha-response')}`
         };
 
         let captcha_ver_response = await fetch( 'https://www.google.com/recaptcha/api/siteverify', options );
         captcha_ver_response = await captcha_ver_response.json();
+        console.log(captcha_ver_response)
+
         if(captcha_ver_response.success==false){
             console.log('here')
             return fail(400,{ 
@@ -49,5 +55,15 @@ export const actions = {
                 message: "Please enter valid details" 
             });
         }
-    }    
+    },
+    oauth: async ({request})=>{
+        const redirecturl="http://localhost:5173/oauth"
+        const oauthclient = new OAuth2Client(SECRET_CLIENT_ID,SECRET_CLIENT_SECRET,redirecturl);
+        const authoriseurl = oauthclient.generateAuthUrl({
+          access_type: 'offline',
+          scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid',
+          prompt: 'consent'
+        });
+        throw redirect(302,authoriseurl);
+      }    
 };

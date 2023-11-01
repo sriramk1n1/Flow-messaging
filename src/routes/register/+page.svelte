@@ -16,7 +16,7 @@
     
     <div class="Digital" style="left: 86px; top: 5vh; position: absolute; color: #3751FE; font-size: 30px; font-family: Roboto; font-weight: 700; word-wrap: break-word">Register.</div>
     <div class="WelcomeBackPleaseLoginToYourAccount" style="left: 86px; top: 12vh; position: absolute; color: rgba(0, 0, 0, 0.60); font-size: 18px; font-family: Roboto; font-weight: 400; word-wrap: break-word">Welcome to Flow Messaging!</div>
-    <form method="POST" use:enhance>
+    <form method="POST" use:enhance action="?/register">
 
             <div class="Rectangle1" style="min-width: 400px; width:35%; height: 74px; left:89px; top: 22vh; position:absolute; background: white; border: 1px #C1BBBB solid">
                 <div class="EmailAddress" style="padding-top:10px; padding-left:20px; color: rgba(0, 0, 0, 0.61); font-size: 18px; font-family: Roboto; font-weight: 400; word-wrap: break-word">Enter Name</div>
@@ -52,12 +52,14 @@
                     <p style="color:red">{form?.message || ""}</p>
                 {/if}
             </div>
+            
         </form>
         <div class="Rectangle6" style="width: 778px; height: 100vh; right: 0px; top: 0px; position: absolute; background: rgba(229, 229, 229, 0.41) margin:0px">
             <!-- svelte-ignore a11y-missing-attribute -->
             <img class="ClipMessageSent1" style="margin: 0px; width: 100%; height: 99%" src="logo.jpeg" />
 
         </div>
+        
 </div>
 
 
@@ -119,4 +121,7 @@
         display: none;
     }
     }
+
+
+
 </style>
