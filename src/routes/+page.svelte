@@ -19,7 +19,7 @@
 	window.addEventListener("beforeunload", function () {
 		if(ws.readyState == WebSocket.OPEN)
         ws.close();
-});
+	});
 });
 function scrollBodyToBottom() {
 	document.documentElement.scrollTo(0,document.body.scrollHeight)
@@ -97,23 +97,9 @@ let func4 = (e) => {
 			</div>		
 		</div>
 	</div>
-		<!-- <div>Conversations:</div>
-		<div>
-			With - {receiver}
-		</div> -->
 		
 	<div class="content" class:c2={!mobileview}>
-		<!-- <a href="/logout"> Logout </a>
-				<div class="top-bar">
-					<div class="other-users">
-						<div class="texts">
-							<div class="name">
-								{receiver || ""}
-							</div>
-						</div>
-					</div> -->
 
-				<!-- </div> -->
 				<div class="topbar" >
 					<div class="mobiletoggle" >
 						<img width=20px height=20px src="menu.png" on:click={func4}>
@@ -226,6 +212,7 @@ let func4 = (e) => {
   flex: 8;
   display: flex;
   flex-direction: column;
+  
 }
 
 .topbar{
@@ -233,7 +220,8 @@ let func4 = (e) => {
 	background-color:aliceblue;
 	display: flex;
 	padding: 20px;
-	position:fixed; width:auto;  display:absolute; right:0px; left:220px
+	position:fixed; width:auto;  display:absolute; right:0px; left:220px;
+	z-index: 1;
 }
 .messages{
 	flex:10;
@@ -243,6 +231,10 @@ let func4 = (e) => {
 	align-items: end;
 	margin-top: 10vh;
 	margin-bottom: 10vh;
+	position: absolute;
+	left:220px;
+	right: 0px;
+	overflow: hidden;
 }
 
 /* Modern input container */
@@ -380,6 +372,9 @@ let func4 = (e) => {
 
 
 @media (max-width: 1026px) {
+	.messages{
+		left:0px;
+	}
 	.espace{
 		display: none;
 	}
