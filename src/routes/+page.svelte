@@ -10,7 +10,7 @@
 	let mobileview=false;
 	
 	onMount(()=>{
-		ws = new WebSocket('wss://skapi.online/ws');
+		ws = new WebSocket('wss://chat.skapi.online/ws');
 		ws.onmessage = (event) => {
       	console.log(event.data);
 		conversation = JSON.parse(event.data);
