@@ -24,7 +24,7 @@ export const actions = {
         const options = {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `secret=${""}&response=${data.get('g-recaptcha-response')}`
+            body: `secret=${"6Lf8s84oAAAAABaWgzstAy6RS8PvWZShf9VxWqHJ"}&response=${data.get('g-recaptcha-response')}`
         };
 
         let captcha_ver_response = await fetch( 'https://www.google.com/recaptcha/api/siteverify', options );
@@ -40,8 +40,8 @@ export const actions = {
 
         if (await verifyuser(data.get("email"),data.get("password"))){
             const sessionid = await createsession(data.get("email"));
-            cookies.set("access","true",{ maxAge : 604800});
-            cookies.set("session",sessionid,{ maxAge : 604800})
+            cookies.set("access","true",{ maxAge : 604800,httpOnly: true,secure:true});
+            cookies.set("session",sessionid,{ maxAge : 604800,httpOnly: true,secure: true})
             throw redirect(303,"/");
         }
         else{
