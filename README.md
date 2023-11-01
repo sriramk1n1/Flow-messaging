@@ -1,2 +1,2 @@
 Simple messaging web application
-https://skapi.online
+https://chat.skapi.online
