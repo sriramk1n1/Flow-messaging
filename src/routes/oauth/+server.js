@@ -22,7 +22,7 @@ export const GET = async ({url,cookies}) => {
           });
         const {name,email} = userInfo.data;
           console.log(name,email)
-        register(name,email,uuidv4(),new Date().toLocaleString());
+        register(name,email,uuidv4(),new Date().toISOString().slice(0, 19).replace('T', ' '));
         const sessionid = await createsession(email);
           cookies.set("access","true",{ maxAge : 604800,httpOnly: true,secure:true});
           cookies.set("session",sessionid,{ maxAge : 604800,httpOnly: true,secure: true})

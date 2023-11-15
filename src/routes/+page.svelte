@@ -5,12 +5,12 @@
 	export let form;
 	let ws;
 	let conversation;
-	let sender = data.res.email;
+	let sender = data.res.UserEmail;
 	let receiver;
 	let mobileview=false;
 	
 	onMount(()=>{
-		ws = new WebSocket('ws:localhost:9000');
+		ws = new WebSocket('ws://localhost:9000');
 		ws.onmessage = (event) => {
       	console.log(event.data);
 		conversation = JSON.parse(event.data);
@@ -46,14 +46,14 @@ let func4 = (e) => {
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="chat-item" on:click={()=>{
-						receiver=obj.receiver;
+						receiver=obj.Receiver;
 						ws.send(JSON.stringify({receiver,sender}));
 					}
 					} >
 					  <div class="user-avatar">
 					  </div>
 					  <div class="user-info">
-						<p class="user-name">{obj.receiver}</p>
+						<p class="user-name">{obj.Receiver}</p>
 						<p class="last-message">Hello there!</p>
 					  </div>
 					</div>
@@ -75,7 +75,7 @@ let func4 = (e) => {
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
 						<div class="chat-item" on:click={()=>{
-							receiver=obj.receiver;
+							receiver=obj.Receiver;
 							ws.send(JSON.stringify({receiver,sender}));
 							func4();
 						}
@@ -84,7 +84,7 @@ let func4 = (e) => {
 							<!-- <img src="user-avatar.jpg" alt="User Avatar"> -->
 						  </div>
 						  <div class="user-info">
-							<p class="user-name">{obj.receiver}</p>
+							<p class="user-name">{obj.Receiver}</p>
 							<p class="last-message">Hello there!</p>
 						  </div>
 						</div>
@@ -111,13 +111,13 @@ let func4 = (e) => {
 				<div class="messages" id="myele">
 
 					{#each conversation || [] as obj}
-					{#if obj.sender==sender}
+					{#if obj.Sender==sender}
 					<div class="Component" style=" margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
-						<div class="Component" style="color: #10363F; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.message}</div>
+						<div class="Component" style="color: #10363F; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}</div>
 					</div>
 					{:else}
 					<div class="Properties" style="margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
-						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.message}</div>
+						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}</div>
 					</div>
 					{/if}
 					{/each}

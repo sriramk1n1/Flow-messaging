@@ -1,17 +1,22 @@
-import Database from 'better-sqlite3'
 import bcrypt from 'bcrypt'
-import { redirect } from '@sveltejs/kit';
+import { createConnection } from 'mysql2';
 
 export let verifyuser = async(email,password)=> {
-    const db = new Database('./src/lib/my.db', {verbose: console.log});
-    const q = db.prepare("SELECT * from users WHERE email=(?)");
-    let resultt;
+    const con = createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'l',
+    database: 'messaging_app',
+    })
+    console.log(email)
     try{
-      const result = await q.get(email)
-      resultt =  await bcrypt.compare(password,result.password);
+      let result;
+      result = await con.promise().execute("SELECT * FROM User WHERE UserEmail=(?)",[email]).then((res)=>{return res[0][0]});
+      console.log(result,"res")
+      let verified =  await bcrypt.compare(password,result.EmailPassword);
+      con.end();
+      if (verified) return true;
+      else return false;
     }catch(e){
     }
-    db.close()
-    if (resultt) return resultt;
-    else return false;
   }

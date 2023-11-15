@@ -1,5 +1,4 @@
 const WebSocket = require('ws');
-const Database = require("better-sqlite3");
 const http = require('http');
 
 const clients = new Map();
@@ -25,21 +24,26 @@ const server = http.createServer((req, res) => {
 		          const wss = new WebSocket.Server({ server });
 		          wss.on('connection', (ws) => {
 				          console.log('Client connected');
-				          const db = new Database('src/lib/my.db');
+						  const {createConnection} = require('mysql2');
+						  const con = createConnection({
+							host: 'localhost',
+							user: 'root',
+							password: 'l',
+							database: 'messaging_app',
+						})
 				          let senderid;
-				          ws.on('message', (message) => {
+				          ws.on('message', async (message) => {
 						            console.log(`Received message: ${message}`);
 						            let {sender,receiver} = JSON.parse(message);
 						            senderid = sender;
 						            clients.set(sender,ws);
 						            const query = `
 							                  SELECT *
-									                FROM conversations
-											              WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?)
-												                    ORDER BY cid
+									                FROM Conversation
+											              WHERE (Sender = ? AND Receiver = ?) OR (Sender = ? AND Receiver = ?)
+												                    ORDER BY CId
 														              `;
-						            const q = db.prepare(query);
-						            const result = q.all(sender,receiver,receiver,sender);
+									const result = await con.promise().execute(query,[sender,receiver,receiver,sender]).then((res)=>{return res[0]});								  		
 						            ws.send(JSON.stringify(result));
 						            console.log("SENT MESSAGE TO SENDER")
 						            console.log(clients.has(receiver));

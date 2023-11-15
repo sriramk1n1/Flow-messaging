@@ -1,10 +1,20 @@
-import Database from 'better-sqlite3'
+import { createConnection } from "mysql2";
 export let getuserdetails = async(sessionid)=> {
-    const db = new Database('./src/lib/my.db', {verbose: console.log});
-    const query = db.prepare("SELECT * from session where sessionid=(?)")
-    const result = query.get(sessionid)
-    const q2 = db.prepare("SELECT * from users WHERE email=(?)")
-    const r2 = q2.get(result.user)
-    db.close();
-    return r2;
+    const con = createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'l',
+        database: 'messaging_app',
+    })
+    let result;
+    result = await con.promise().execute("SELECT * from Session where SessionId=(?)",[sessionid]).then((res)=>{
+        return res[0][0];
+    });
+    console.log(result)
+    result = await con.promise().execute("SELECT * from User where UserEmail=(?)",[result.UserEmail]).then((res)=>{
+        return res[0][0];
+    });
+    console.log(result)
+    con.end();
+    return result;
 }

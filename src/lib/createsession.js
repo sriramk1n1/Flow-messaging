@@ -1,11 +1,16 @@
-import Database from 'better-sqlite3'
 import { v4 as uuidv4 } from 'uuid'
+import { createConnection } from 'mysql2';
+
+
 export let createsession = async(user)=> {
-    const db = new Database('./src/lib/my.db', {verbose: console.log});
-    const query = db.prepare("INSERT INTO session (sessionid,user) values(?,?)");
+    const con = createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'l',
+        database: 'messaging_app',
+    })
     const sessionid = uuidv4();
-    console.log(sessionid);
-    query.run(sessionid,user);
-    db.close();
+    con.execute("INSERT INTO Session values (?,?)",[sessionid,user]);
+    con.end();
     return sessionid;
 }

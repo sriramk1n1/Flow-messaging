@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import Database from 'better-sqlite3';
+import { createConnection } from 'mysql2';
 import { getuserdetails } from '../lib/getuserfromsession';
 
 export const load = async({ request, cookies }) => {
@@ -8,11 +8,15 @@ export const load = async({ request, cookies }) => {
 	}else{
 
 		
-
-		const db = new Database('src/lib/my.db',{verbose:console.log});
+		const con = createConnection({
+			host: 'localhost',
+			user: 'root',
+			password: 'l',
+			database: 'messaging_app',
+		})
 		const res = await getuserdetails(cookies.get("session"))
-		const r3 = db.prepare("SELECT receiver from hadconversationswith where sender=(?)");
-		const r4 = r3.all(res.email);
+		const r4 = await con.promise().execute("SELECT Receiver from Hadconversationswith where Sender=(?)",[res.UserEmail]).then((res)=>{return res[0]});
+
 		return {
 			res,
 			convlist: r4
@@ -22,35 +26,41 @@ export const load = async({ request, cookies }) => {
 
 export const actions = {
 	adduser: async({request,cookies}) => {
-		const db = new Database('src/lib/my.db',{verbose:console.log});
-		const r1 = db.prepare('SELECT user FROM session WHERE sessionid=(?)');
-		const userfrom = r1.get(cookies.get("session")).user;
+		const con = createConnection({
+			host: 'localhost',
+			user: 'root',
+			password: 'l',
+			database: 'messaging_app',
+		})
+		const userfrom = await con.promise().execute("SELECT UserEmail FROM Session WHERE SessionId=(?)",[cookies.get("session")]).then((res)=>{return res[0][0].UserEmail})
 		const r2 = await request.formData();
 		const userto = r2.get("adduser");
 		try{
-			const r3 = db.prepare("SELECT receiver from hadconversationswith where sender=(?)");
-			const r4 = r3.all(userfrom);
+			const r4 = await con.promise().execute("SELECT Receiver from Hadconversationswith where Sender=(?)",[userfrom]).then((res)=>{return res[0]});
+			console.log('r4',r4);
 			let flag=false;
 			r4.forEach((obj)=>{
-				if (obj.receiver===userto) {
+				if (obj.Receiver===userto) {
 					flag=true;
 				}
 			});
 			console.log(flag)
 			if (!flag){
-				db.prepare("INSERT INTO hadconversationswith (sender,receiver) VALUES (?,?)").run(userfrom,userto);
+				await con.promise().execute("INSERT INTO Hadconversationswith VALUES (?,?)",[userfrom,userto]);
 			}else{
 				return;
 			}
+			console.log("herreee")
+			const convs= await con.promise().execute("SELECT Receiver FROM Hadconversationswith WHERE Sender=(?)",[userfrom]).then((res)=>{return res[0]});
 			return {
 				success: true,
-				convlist: db.prepare("SELECT receiver FROM hadconversationswith WHERE sender=(?)").all(userfrom)
+				convlist: convs
 			}
 		}catch(e){
 			console.log(e);
 			return fail(400,{
 				success: false,
-				umessage: "User does not exist"
+				message: "User does not exist"
 			});
 		}
 		
@@ -61,10 +71,16 @@ export const actions = {
 		console.log("RECEIIIIIIIIIIIIIIVED ",message)
 		const receiver = t.get("receiver");
 		const t1 = await getuserdetails(cookies.get("session"));
-		const sender = t1.email;
-		const db = new Database('src/lib/my.db',{verbose:console.log});
-		const r1 = db.prepare('INSERT INTO conversations (sender,receiver,timestamp,message) values (?,?,?,?)');
-		r1.run(sender,receiver,new Date().toLocaleString(),message)
+		console.log(t1,'t1')
+		const sender = t1.UserEmail;
+		const con = createConnection({
+			host: 'localhost',
+			user: 'root',
+			password: 'l',
+			database: 'messaging_app',
+		})
+		await con.promise().execute("INSERT INTO Conversation (Sender,Receiver,Timestamp,Message) values (?,?,?,?)",[sender,receiver,new Date().toISOString().slice(0, 19).replace('T', ' '),message]);
+		
 		return {
 			status:"sent",
 			message:message,
