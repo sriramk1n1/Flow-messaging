@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 
 export const GET = async ({url,cookies}) => {
-    const redirecturl = 'http://localhost:5173/oauth';
+    const redirecturl = 'https://chat.skapi.online/oauth';
     const code = await url.searchParams.get('code');
     console.log('returned code',code);
 
@@ -22,8 +22,9 @@ export const GET = async ({url,cookies}) => {
           });
         const {name,email} = userInfo.data;
           console.log(name,email)
-        register(name,email,uuidv4(),new Date().toISOString().slice(0, 19).replace('T', ' '));
+        await register(name,email,uuidv4(),new Date().toISOString().slice(0, 19).replace('T', ' '));
         const sessionid = await createsession(email);
+	    console.log("created session for",email);
           cookies.set("access","true",{ maxAge : 604800,httpOnly: true,secure:true});
           cookies.set("session",sessionid,{ maxAge : 604800,httpOnly: true,secure: true})
           throw redirect(303,"/");

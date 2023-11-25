@@ -7,12 +7,11 @@ export let register = async (username,email,password,regdate)=> {
             password: 'l',
             database: 'messaging_app',
         })
-        con.execute("INSERT INTO User (Username,UserEmail,EmailPassword,RegDate) values (?,?,?,?)",[username,email,password,regdate],(err,res)=>console.log(err,res));
+        con.query("INSERT INTO User (Username,UserEmail,EmailPassword,RegDate) values (?,?,?,?)",[username,email,password,regdate]);
         con.end();
         return 0;
-    }catch(e){
-        console.log(e)
-        db.close();
+    }catch(err){
+        console.log("Insert failed");
         return -1;
     }
 }

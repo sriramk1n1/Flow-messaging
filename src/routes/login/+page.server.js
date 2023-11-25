@@ -57,13 +57,14 @@ export const actions = {
         }
     },
     oauth: async ({request})=>{
-        const redirecturl="http://localhost:5173/oauth"
+        const redirecturl="https://chat.skapi.online/oauth"
         const oauthclient = new OAuth2Client(SECRET_CLIENT_ID,SECRET_CLIENT_SECRET,redirecturl);
         const authoriseurl = oauthclient.generateAuthUrl({
           access_type: 'offline',
           scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid',
           prompt: 'consent'
         });
-        throw redirect(302,authoriseurl);
+
+	throw redirect(302,authoriseurl);
       }    
 };
