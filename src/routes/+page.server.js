@@ -35,22 +35,12 @@ export const actions = {
 		const userfrom = await con.promise().execute("SELECT UserEmail FROM Session WHERE SessionId=(?)",[cookies.get("session")]).then((res)=>{return res[0][0].UserEmail})
 		const r2 = await request.formData();
 		const userto = r2.get("adduser");
+		if (userfrom==userto) return;
 		try{
-			const r4 = await con.promise().execute("SELECT Receiver from Hadconversationswith where Sender=(?)",[userfrom]).then((res)=>{return res[0]});
-			console.log('r4',r4);
-			let flag=false;
-			r4.forEach((obj)=>{
-				if (obj.Receiver===userto) {
-					flag=true;
-				}
-			});
-			console.log(flag)
-			if (!flag){
-				await con.promise().execute("INSERT INTO Hadconversationswith VALUES (?,?)",[userfrom,userto]);
-			}else{
-				return;
-			}
-			console.log("herreee")
+				await con.promise().execute("INSERT IGNORE INTO Hadconversationswith VALUES (?,?)",[userfrom,userto]);
+				await con.promise().execute("INSERT IGNORE INTO Hadconversationswith VALUES (?,?)",[userto,userfrom]);
+
+			
 			const convs= await con.promise().execute("SELECT Receiver FROM Hadconversationswith WHERE Sender=(?)",[userfrom]).then((res)=>{return res[0]});
 			return {
 				success: true,
@@ -86,5 +76,21 @@ export const actions = {
 			message:message,
 			receiver:receiver
 		};
+	},
+	removeuser: async({request,cookies}) => {
+		const con = createConnection({
+			host: 'localhost',
+			user: 'root',
+			password: 'l',
+			database: 'messaging_app',
+		})
+		const r = await request.formData();
+		const userto = r.get("user");
+		if (userto=="") return;
+		const userfrom = await con.promise().execute("SELECT UserEmail FROM Session WHERE SessionId=(?)",[cookies.get("session")]).then((res)=>{return res[0][0].UserEmail})
+		console.log(userto,userfrom)
+		await con.promise().execute("DELETE FROM Hadconversationswith WHERE Sender=(?) AND Receiver=(?)",[userfrom,userto]);
+
+
 	}
 };

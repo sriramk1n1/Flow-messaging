@@ -8,14 +8,27 @@
 	let sender = data.res.UserEmail;
 	let receiver;
 	let mobileview=false;
+	let onlineusers;
 	
 	onMount(()=>{
 		ws = new WebSocket('wss://chat.skapi.online/ws');
 		ws.onmessage = (event) => {
-      	console.log(event.data);
-		conversation = JSON.parse(event.data);
-		scrollBodyToBottom();
+      	let d = JSON.parse(event.data);
+		if (d?.type=="online"){
+			onlineusers=d.data;
+			console.log(onlineusers[0])
+		}
+		else{
+			conversation = d;
+			scrollBodyToBottom();
+		}
+		
     };
+
+	setTimeout(()=>{
+		wsfunc();
+		setInterval(wsfunc,10000);
+	},3000);
 	window.addEventListener("beforeunload", function () {
 		if(ws.readyState == WebSocket.OPEN)
         ws.close();
@@ -29,8 +42,10 @@ let func4 = (e) => {
 		
 
 	}
+	let wsfunc = () => {
+		ws.send("on")
+	}
 	$: data.convlist = form?.convlist ? form.convlist : data.convlist;
-
 </script>
 <div class="body-container">
 	<div class="sidebar">
@@ -40,9 +55,8 @@ let func4 = (e) => {
 			</form>
 		</div>	
 		<div class="conversations" style="padding: 10px;">
-
 			{#each data?.convlist || [] as obj}
-				<div class="chat-list" class:selected={receiver == obj.receiver}>
+				<div class="chat-list" class:selected={receiver == obj.Receiver}>
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="chat-item" on:click={()=>{
@@ -54,7 +68,7 @@ let func4 = (e) => {
 					  </div>
 					  <div class="user-info">
 						<p class="user-name">{obj.Receiver}</p>
-						<p class="last-message">Hello there!</p>
+						<p class:online={onlineusers?.includes(obj.Receiver)} class:offline={!(onlineusers?.includes(obj.Receiver))}>{onlineusers?.includes(obj.Receiver)?"Online":"Offline"}</p>
 					  </div>
 					</div>
 				</div>
@@ -79,13 +93,13 @@ let func4 = (e) => {
 							ws.send(JSON.stringify({receiver,sender}));
 							func4();
 						}
-						} class:selected={receiver == obj.receiver}>
+						} class:selected={receiver == obj.Receiver}>
 						  <div class="user-avatar">
 							<!-- <img src="user-avatar.jpg" alt="User Avatar"> -->
 						  </div>
 						  <div class="user-info">
 							<p class="user-name">{obj.Receiver}</p>
-							<p class="last-message">Hello there!</p>
+							<p class:online={onlineusers?.includes(obj.Receiver)} class:offline={!(onlineusers?.includes(obj.Receiver))}>{onlineusers?.includes(obj.Receiver)?"Online":"Offline"}</p>
 						  </div>
 						</div>
 					</div>
@@ -104,9 +118,13 @@ let func4 = (e) => {
 					<div style="flex:4; text-align:center ">
 						{receiver || ""}
 					</div>
-					<div>
-						<a href="/logout"> Logout </a>
-					</div>
+					<span>
+						<form method="post" use:enhance action="?/removeuser">
+							<input type="text" name=user hidden value={receiver}>
+							<button type="submit" style="background-color: transparent; border:none; color:blue; padding-right:10px"> Remove User </button>
+						</form>
+					</span>
+					<a href="/logout" style="text-decoration:none; color: blue"> Logout </a>
 				</div>
 				<div class="messages" id="myele">
 
@@ -230,7 +248,12 @@ let func4 = (e) => {
 	padding: 10px;
 }
 
-
+.online{
+	color: green;
+}
+.offline{
+	color:grey;
+}
 
 .form2{
 	flex: 1;
@@ -304,7 +327,6 @@ let func4 = (e) => {
 
 .chat-list {
   margin-top: 5px; 
-  padding: 10px; 
   background-color: #fff; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   border-radius: 8px;
@@ -314,6 +336,7 @@ let func4 = (e) => {
   display: flex;
   align-items: center;
   padding: 10px;
+  border-radius: 10px;
 }
 
 

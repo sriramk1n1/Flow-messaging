@@ -34,6 +34,11 @@ const server = http.createServer((req, res) => {
 				          let senderid;
 				          ws.on('message', async (message) => {
 						            console.log(`Received message: ${message}`);
+									if (message=="on"){
+								
+										ws.send(JSON.stringify({type:"online",data:Array.from(clients.keys())}))
+									}
+									else{
 						            let {sender,receiver} = JSON.parse(message);
 						            senderid = sender;
 						            clients.set(sender,ws);
@@ -53,7 +58,7 @@ const server = http.createServer((req, res) => {
 								                wsss.send(JSON.stringify(result));
 								                console.log("SENT MESSAGE TO RECEIVER")
 								              }
-						            console.log(clients.keys())
+						            console.log(clients.keys())}
 						          });
 
 				         ws.on('close', () => {
