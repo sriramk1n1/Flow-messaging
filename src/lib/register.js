@@ -7,7 +7,7 @@ export let register = async (username,email,password,regdate)=> {
             password: 'l',
             database: 'messaging_app',
         })
-        con.query("INSERT INTO User (Username,UserEmail,EmailPassword,RegDate) values (?,?,?,?)",[username,email,password,regdate]);
+        con.query("INSERT IGNORE INTO User (Username,UserEmail,EmailPassword,RegDate) values (?,?,?,?)",[username,email,password,regdate]);
         con.end();
         return 0;
     }catch(err){
