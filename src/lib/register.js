@@ -13,7 +13,7 @@ export let register = async (username,email,password,regdate)=> {
     }catch(err){
         console.log("Insert failed");
         return -1;
-    }
+    };
 }
 
 

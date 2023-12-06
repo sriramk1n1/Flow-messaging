@@ -62,6 +62,7 @@ const server = http.createServer((req, res) => {
 						          );
 
 				         ws.on('close', () => {
+								 con.end();
 						         console.log('Client disconnected');
 						         clients.delete(senderid);
 						         });

@@ -18,5 +18,7 @@ export let verifyuser = async(email,password)=> {
       if (verified) return true;
       else return false;
     }catch(e){
+    }finally{
+      con.end();
     }
   }
