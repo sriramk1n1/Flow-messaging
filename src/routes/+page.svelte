@@ -1,6 +1,7 @@
 <script>
 	import { enhance } from "$app/forms";
 	import { onMount } from "svelte";
+
 	export let data;
 	export let form;
 	let ws;
@@ -9,34 +10,30 @@
 	let receiver;
 	let mobileview=false;
 	let onlineusers;
-	
+	let scrollable;
+	let inputfile;
+	let filesubmit;
 	onMount(()=>{
-		ws = new WebSocket('wss://chat.skapi.online/ws');
+		ws = new WebSocket('ws://localhost:9000');
 		ws.onmessage = (event) => {
       	let d = JSON.parse(event.data);
 		if (d?.type=="online"){
 			onlineusers=d.data;
-			console.log(onlineusers[0])
 		}
 		else{
 			conversation = d;
-			scrollBodyToBottom();
 		}
 		
     };
 
-	setTimeout(()=>{
-		wsfunc();
-		setInterval(wsfunc,10000);
-	},3000);
-	window.addEventListener("beforeunload", function () {
-		if(ws.readyState == WebSocket.OPEN)
-        ws.close();
-	});
+
 });
-function scrollBodyToBottom() {
-	document.documentElement.scrollTo(0,document.body.scrollHeight)
-}
+const scrollToBottom = async (node) => {
+    node.scroll({ bottom: node.scrollHeight, behavior: 'smooth' });
+  }; 
+
+
+
 let func4 = (e) => {
 		mobileview=!mobileview;
 		
@@ -47,12 +44,13 @@ let func4 = (e) => {
 	}
 	$: data.convlist = form?.convlist ? form.convlist : data.convlist;
 </script>
-<div class="body-container">
+<div class="body-container" >
 	<div class="sidebar">
-		<div class="input-container" style="padding:10px">
-			<form method="post" use:enhance action="?/adduser">
-				<input type="text" class="modern-input" placeholder="Add users..." name=adduser>
-			</form>
+	    
+		<div class="input-container" style="padding:10px; padding-left:28px; display:inline-block">
+				<form method="post" use:enhance action="?/adduser">
+					<input type="text" class="modern-input" placeholder="Add users..." name=adduser>
+				</form>
 		</div>	
 		<div class="conversations" style="padding: 10px;">
 			{#each data?.convlist || [] as obj}
@@ -65,10 +63,11 @@ let func4 = (e) => {
 					}
 					} >
 					  <div class="user-avatar">
+						<img style="border-radius: 30px; border:#007bff 1px solid" src="profile.jpg" height=50px width=50px>
 					  </div>
 					  <div class="user-info">
-						<p class="user-name">{obj.Receiver}</p>
-						<p class:online={onlineusers?.includes(obj.Receiver)} class:offline={!(onlineusers?.includes(obj.Receiver))}>{onlineusers?.includes(obj.Receiver)?"Online":"Offline"}</p>
+						<p class="user-name" style="padding-left:10px">{obj.Receiver}</p>
+						<p style="padding-left:10px" class:online={onlineusers?.includes(obj.Receiver)} class:offline={!(onlineusers?.includes(obj.Receiver))}>{onlineusers?.includes(obj.Receiver)?"Online":"Offline"}</p>
 					  </div>
 					</div>
 				</div>
@@ -108,7 +107,7 @@ let func4 = (e) => {
 		</div>
 	</div>
 		
-	<div class="content" class:c2={!mobileview}>
+	<div class="content" class:c2={!mobileview} >
 
 				<div class="topbar" >
 					<div class="mobiletoggle" >
@@ -126,11 +125,35 @@ let func4 = (e) => {
 					</span>
 					<a href="/logout" style="text-decoration:none; color: blue"> Logout </a>
 				</div>
-				<div class="messages" id="myele">
+				<div class="messages" id="myele" style="padding-bottom:100px" bind:this={scrollable} >
 
 					{#each conversation || [] as obj}
-					{#if obj.Sender==sender}
+					{#if obj.Message.startsWith("Document") && obj.Sender==sender}
 					<div class="Component" style=" margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+						<div class="Component" style="color: #10363F; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}<button id={obj.CId} on:click={(e)=>{
+							const cid= e.target.id
+							const anchor = document.createElement('a');
+							anchor.href = `/download/${cid}`;
+							anchor.target = '_blank'; // Open link in a new tab/window
+							document.body.appendChild(anchor);
+							anchor.click();
+							document.body.removeChild(anchor); 
+						}}>Download</button></div>
+					</div>
+					{:else if obj.Message.startsWith("Document") && obj.Sender==receiver}
+					<div class="Properties" style="margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}<button id={obj.CId} on:click={(e)=>{
+							const cid= e.target.id
+							const anchor = document.createElement('a');
+							anchor.href = `/download/${cid}`;
+							anchor.target = '_blank'; // Open link in a new tab/window
+							document.body.appendChild(anchor);
+							anchor.click();
+							document.body.removeChild(anchor); 
+						}}>Download</button></div>
+					</div>
+					{:else if obj.Sender==sender}
+					<div class="Component" style=" margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background:#DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<div class="Component" style="color: #10363F; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}</div>
 					</div>
 					{:else}
@@ -139,9 +162,8 @@ let func4 = (e) => {
 					</div>
 					{/if}
 					{/each}
-					
 				</div>
-			<div class="footer">
+			<div class="footer"   >
 
 				<form class="form2"
 							method="post"
@@ -171,11 +193,23 @@ let func4 = (e) => {
 							}}
 							action="?/message">
 							<div class="espace"></div>
+							<button on:click|preventDefault={()=>{inputfile.click()}} class="docbutton"> Send Document </button>
 				<input type="text" class="modern-input2" placeholder="Type your message..." name="message">
 				<div class="rightspace">
 					<button class="send-button" type="submit" >Send</button>
 				</div>
 				
+			</form>
+			<form method="post" enctype="multipart/form-data" use:enhance={() => {
+
+				return async ({ update }) => {
+					update();
+					ws.send(JSON.stringify({receiver,sender}));
+				};
+			}} action="?/document">
+				<input type="file" name="file" hidden bind:this={inputfile} on:change={()=>{filesubmit.click();}}>
+				<input type="text" name="receiver" bind:value={receiver} hidden>
+				<button type="submit" hidden bind:this={filesubmit}></button>
 			</form>
 			</div>		
 	</div>
@@ -199,7 +233,7 @@ let func4 = (e) => {
 }
 .sidebar {
 	background-color:aliceblue;
-  flex: 5;
+  flex: 4;
   flex-grow: 1;
   border-radius: 10px;
   position: fixed;
@@ -209,7 +243,7 @@ let func4 = (e) => {
 	position: fixed;
 	display: absolute;
 	bottom:0px;
-	width:auto;  display:absolute; right:0px; left:220px;
+	width:auto;  display:absolute; right:0px; left:260px;
 	background-color: white;
 }
 .input-container{
@@ -230,7 +264,7 @@ let func4 = (e) => {
 	background-color:aliceblue;
 	display: flex;
 	padding: 20px;
-	position:fixed; width:auto;  display:absolute; right:0px; left:220px;
+	position:fixed; width:auto;  display:absolute; right:0px; left:260px;
 	z-index: 1;
 }
 .messages{
@@ -242,9 +276,9 @@ let func4 = (e) => {
 	margin-top: 10vh;
 	margin-bottom: 10vh;
 	position: absolute;
-	left:220px;
+	left:260px;
 	right: 0px;
-	overflow: hidden;
+	overflow: auto;
 	padding: 10px;
 }
 
@@ -275,7 +309,7 @@ let func4 = (e) => {
 }
 
 .espace{
-	flex:2;
+	flex:1;
 }
 .modern-input2 {
 
@@ -304,6 +338,17 @@ let func4 = (e) => {
 	bottom: 0;
 	width: 100px;
   background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.docbutton{
+	margin: 10px;
+	width: 100px;
+
+	background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 10px;

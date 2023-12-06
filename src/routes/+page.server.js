@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { createConnection } from 'mysql2';
 import { getuserdetails } from '../lib/getuserfromsession';
+import { writeFile } from 'fs/promises';
 
 export const load = async({ request, cookies }) => {
 	if (!cookies.get("access")) {
@@ -92,5 +93,32 @@ export const actions = {
 		await con.promise().execute("DELETE FROM Hadconversationswith WHERE Sender=(?) AND Receiver=(?)",[userfrom,userto]);
 
 
+	},
+	document: async({request,cookies}) => {
+		const data = await request.formData();
+		const file = data.get("file")
+		const receiver=data.get("receiver")
+		const con = createConnection({
+			host: 'localhost',
+			user: 'root',
+			password: 'l',
+			database: 'messaging_app',
+		})
+		const sender = await con.promise().execute("SELECT UserEmail FROM Session WHERE SessionId=(?)",[cookies.get("session")]).then((res)=>{return res[0][0].UserEmail})
+		let name="Document: "+file.name;
+		await con.promise().execute("INSERT INTO Conversation (Sender,Receiver,Timestamp,Message) values (?,?,?,?)",[sender,receiver,new Date().toISOString().slice(0, 19).replace('T', ' '),name]);
+		
+		const count = await con.promise().execute("select count(*) as count from Conversation");
+
+		let filedata = await file.arrayBuffer();
+		// filedata = new TextEncoder().encode(filedata)
+
+		await con.promise().execute("INSERT INTO Documents (CId, File, Name) values (?,?,?)",[count[0][0].count,filedata,file.name]);
+
+	    // writeFile(`./documents/${file.name}`,await file.stream());
+
+
+
+		
 	}
 };

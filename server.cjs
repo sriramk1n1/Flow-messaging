@@ -34,14 +34,14 @@ const server = http.createServer((req, res) => {
 				          let senderid;
 				          ws.on('message', async (message) => {
 						            console.log(`Received message: ${message}`);
-									if (message=="on"){
-								
-										ws.send(JSON.stringify({type:"online",data:Array.from(clients.keys())}))
-									}
-									else{
+
 						            let {sender,receiver} = JSON.parse(message);
 						            senderid = sender;
 						            clients.set(sender,ws);
+									for(let [key, value] of clients){
+										value.send(JSON.stringify({type:"online",data:Array.from(clients.keys())}))
+									}
+									
 						            const query = `
 							                  SELECT *
 									                FROM Conversation
@@ -59,7 +59,7 @@ const server = http.createServer((req, res) => {
 								                console.log("SENT MESSAGE TO RECEIVER")
 								              }
 						            console.log(clients.keys())}
-						          });
+						          );
 
 				         ws.on('close', () => {
 						         console.log('Client disconnected');
