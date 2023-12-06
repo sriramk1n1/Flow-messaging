@@ -238,12 +238,13 @@ let func4 = (e) => {
   border-radius: 10px;
   position: fixed;
   height: 100vh;
+  z-index: 2;
 }
 .footer{
 	position: fixed;
 	display: absolute;
 	bottom:0px;
-	width:auto;  display:absolute; right:0px; left:260px;
+	width:auto;  display:absolute; right:0px; left:230px;
 	background-color: white;
 }
 .input-container{
@@ -264,7 +265,7 @@ let func4 = (e) => {
 	background-color:aliceblue;
 	display: flex;
 	padding: 20px;
-	position:fixed; width:auto;  display:absolute; right:0px; left:260px;
+	position:fixed; width:auto;  display:absolute; right:0px; left:230px;
 	z-index: 1;
 }
 .messages{
@@ -276,7 +277,7 @@ let func4 = (e) => {
 	margin-top: 10vh;
 	margin-bottom: 10vh;
 	position: absolute;
-	left:260px;
+	left:270px;
 	right: 0px;
 	overflow: auto;
 	padding: 10px;
