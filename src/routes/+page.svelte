@@ -131,7 +131,7 @@ let func4 = (e) => {
 
 					{#each conversation || [] as obj}
 					{#if obj.Message.startsWith("Document") && obj.Sender==sender}
-					<div class="Component" style="max-width:500px; margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+					<div class="Component" style="max-width:450px; margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 						<!-- svelte-ignore a11y-missing-attribute -->
@@ -147,15 +147,15 @@ let func4 = (e) => {
 							document.body.removeChild(anchor); 
 						}}>
 						{#if (obj.Message.endsWith(".jpg") || obj.Message.endsWith('.jpeg') || obj.Message.endsWith('png'))}
-							<div style="text-align:center; padding:10px">
-								<img style="border:#007bff 1px solid" src={`/download/image/${obj.CId}`} height="200px"  >
+							<div style=" text-align:center; padding:10px">
+								<img style="border-radius: 10px; width:auto; height:auto; max-height:200px;max-width:320px; border:#007bff 1px solid" src={`/download/image/${obj.CId}`} >
 							</div>
 						{/if}
 						</div>
 					</div>
 					{:else if obj.Message.startsWith("Document") && obj.Receiver==sender}
 					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-					<div class="Properties" style="max-width:500px; margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+					<div class="Properties" style="max-width:450px; margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}<img src="download.png" height="30px" width="40px"
@@ -171,7 +171,7 @@ let func4 = (e) => {
 							}}>
 							{#if (obj.Message.endsWith(".jpg") || obj.Message.endsWith('.jpeg') || obj.Message.endsWith('png'))}
 							<div style="text-align:center; padding:10px">
-								<img style="border:#007bff 1px solid" src={`/download/image/${obj.CId}`} height="200px"  >
+								<img style="border-radius: 10px; width:auto; height:auto; max-height:200px;max-width:320px; border:#007bff 1px solid" src={`/download/image/${obj.CId}`} height="200px"  >
 							</div>
 						{/if}	
 						</div>
@@ -217,7 +217,7 @@ let func4 = (e) => {
 							}}
 							action="?/message">
 							<div class="espace"></div>
-							<button on:click|preventDefault={()=>{inputfile.click()}} class="docbutton"> Send Document </button>
+							<button type="button" on:click|preventDefault={()=>{inputfile.click()}} class="docbutton"> Send Document </button>
 				<input type="text" class="modern-input2" placeholder="Type your message..." name="message">
 				<div class="rightspace">
 					<button class="send-button" type="submit" >Send</button>
