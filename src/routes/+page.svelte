@@ -93,7 +93,7 @@ let func4 = (e) => {
 						}
 						} class:selected={receiver == obj.Receiver}>
 						  <div class="user-avatar">
-							<img style="border-radius: 30px; border:#007bff 1px solid" src="profile.jpg" height=50px width=50px>
+							<img style="border-radius: 30px; border:#007bff 1px solid" src={`/download/profile/${obj.Receiver}`} height=50px width=50px>
 
 							<!-- <img src="user-avatar.jpg" alt="User Avatar"> -->
 						  </div>
