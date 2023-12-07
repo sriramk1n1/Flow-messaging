@@ -3,7 +3,9 @@ import { OAuth2Client } from "google-auth-library";
 import {SECRET_CLIENT_ID,SECRET_CLIENT_SECRET} from "$env/static/private"
 import { createsession } from "../../lib/createsession";
 import { register } from '../../lib/register';
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
+import { createConnection } from "mysql2";
+import fs from 'fs';
 
 
 
@@ -35,7 +37,7 @@ export const GET = async ({url,cookies}) => {
 
 
         const sessionid = await createsession(email);
-	    console.log("created session for",email);
+	      console.log("created session for",email);
           cookies.set("access","true",{ maxAge : 604800,httpOnly: true,secure:true});
           cookies.set("session",sessionid,{ maxAge : 604800,httpOnly: true,secure: true})
           throw redirect(303,"/");
