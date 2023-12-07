@@ -1,20 +1,19 @@
 import { createConnection } from "mysql2";
+import {DB_URL} from '$env/static/private'
+
 export let getuserdetails = async(sessionid)=> {
     const con = createConnection({
-        host: 'https://flow.skapi.online/db',
+        host: DB_URL,
         user: 'root',
         password: 'l',
         database: 'messaging_app',
     })
-    let result;
-    result = await con.promise().execute("SELECT * from Session where SessionId=(?)",[sessionid]).then((res)=>{
+    const result = await con.promise().execute("SELECT * from Session where SessionId=(?)",[sessionid]).then((res)=>{
         return res[0][0];
     });
-    console.log(result)
-    result = await con.promise().execute("SELECT * from User where UserEmail=(?)",[result.UserEmail]).then((res)=>{
+    const final = await con.promise().execute("SELECT * from User where UserEmail=(?)",[result.UserEmail]).then((res)=>{
         return res[0][0];
     });
-    console.log(result)
     con.end();
-    return result;
+    return final;
 }

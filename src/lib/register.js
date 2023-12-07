@@ -1,8 +1,10 @@
 import { createConnection  } from 'mysql2';
+import {DB_URL} from '$env/static/private'
+
 export let register = async (username,email,password,regdate)=> {
     try{
         const con = createConnection({
-            host: 'https://flow.skapi.online/db',
+            host: DB_URL,
             user: 'root',
             password: 'l',
             database: 'messaging_app',

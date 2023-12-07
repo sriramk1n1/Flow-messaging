@@ -1,7 +1,7 @@
 <script>
 	import { enhance } from "$app/forms";
 	import { onMount } from "svelte";
-
+	import { PUBLIC_WS_URL } from "$env/static/public"
 	export let data;
 	export let form;
 	let ws;
@@ -14,7 +14,7 @@
 	let inputfile;
 	let filesubmit;
 	onMount(()=>{
-		ws = new WebSocket('wss://chat.skapi.online/ws');
+		ws = new WebSocket(PUBLIC_WS_URL);
 		ws.onmessage = (event) => {
       	let d = JSON.parse(event.data);
 		if (d?.type=="online"){
@@ -62,7 +62,7 @@ let func4 = (e) => {
 					}
 					} >
 					  <div class="user-avatar">
-						<img style="border-radius: 30px; border:#007bff 1px solid" src="profile.jpg" height=50px width=50px>
+						<img style="border-radius: 30px; border:#007bff 1px solid" src={`/download/profile/${obj.Receiver}`} height=50px width=50px>
 					  </div>
 					  <div class="user-info">
 						<p class="user-name" style="padding-left:10px">{obj.Receiver}</p>
@@ -131,7 +131,7 @@ let func4 = (e) => {
 
 					{#each conversation || [] as obj}
 					{#if obj.Message.startsWith("Document") && obj.Sender==sender}
-					<div class="Component" style=" margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+					<div class="Component" style="max-width:500px; margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 						<!-- svelte-ignore a11y-missing-attribute -->
@@ -145,11 +145,17 @@ let func4 = (e) => {
 							document.body.appendChild(anchor);
 							anchor.click();
 							document.body.removeChild(anchor); 
-						}}></div>
+						}}>
+						{#if (obj.Message.endsWith(".jpg") || obj.Message.endsWith('.jpeg') || obj.Message.endsWith('png'))}
+							<div style="text-align:center; padding:10px">
+								<img style="border:#007bff 1px solid" src={`/download/image/${obj.CId}`} height="200px"  >
+							</div>
+						{/if}
+						</div>
 					</div>
 					{:else if obj.Message.startsWith("Document") && obj.Receiver==sender}
 					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-					<div class="Properties" style="margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+					<div class="Properties" style="max-width:500px; margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}<img src="download.png" height="30px" width="40px"
@@ -162,14 +168,20 @@ let func4 = (e) => {
 								document.body.appendChild(anchor);
 								anchor.click();
 								document.body.removeChild(anchor); 
-							}}></div>
+							}}>
+							{#if (obj.Message.endsWith(".jpg") || obj.Message.endsWith('.jpeg') || obj.Message.endsWith('png'))}
+							<div style="text-align:center; padding:10px">
+								<img style="border:#007bff 1px solid" src={`/download/image/${obj.CId}`} height="200px"  >
+							</div>
+						{/if}	
+						</div>
 					</div>
 					{:else if obj.Sender==sender}
-					<div class="Component" style=" margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background:#DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+					<div class="Component" style="max-width:500px; margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background:#DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<div class="Component" style="color: #10363F; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}</div>
 					</div>
 					{:else}
-					<div class="Properties" style="margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
+					<div class="Properties" style="max-width:500px; margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
 						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}</div>
 					</div>
 					{/if}

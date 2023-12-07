@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { createConnection } from 'mysql2';
 import { getuserdetails } from '../lib/getuserfromsession';
+import {DB_URL} from '$env/static/private'
 
 export const load = async({ request, cookies }) => {
 	if (!cookies.get("access")) {
@@ -9,7 +10,7 @@ export const load = async({ request, cookies }) => {
 
 		
 		const con = createConnection({
-			host: 'https://flow.skapi.online/db',
+			host: DB_URL,
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
@@ -27,7 +28,7 @@ export const load = async({ request, cookies }) => {
 export const actions = {
 	adduser: async({request,cookies}) => {
 		const con = createConnection({
-			host: 'https://flow.skapi.online/db',
+			host: DB_URL,
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
@@ -66,7 +67,7 @@ export const actions = {
 		console.log(t1,'t1')
 		const sender = t1.UserEmail;
 		const con = createConnection({
-			host: 'https://flow.skapi.online/db',
+			host: DB_URL,
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
@@ -81,7 +82,7 @@ export const actions = {
 	},
 	removeuser: async({request,cookies}) => {
 		const con = createConnection({
-			host: 'https://flow.skapi.online/db',
+			host: DB_URL,
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
@@ -100,7 +101,7 @@ export const actions = {
 		const file = data.get("file")
 		const receiver=data.get("receiver")
 		const con = createConnection({
-			host: 'https://flow.skapi.online/db',
+			host: DB_URL,
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
