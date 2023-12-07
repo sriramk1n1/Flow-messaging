@@ -22,6 +22,18 @@ export const GET = async ({url,cookies}) => {
         const {name,email} = userInfo.data;
           console.log(name,email)
         await register(name,email,uuidv4(),new Date().toISOString().slice(0, 19).replace('T', ' '));
+
+        const dp = fs.readFileSync('static/profile.jpg')
+        const con = createConnection({
+          host: DB_URL,
+          user: 'root',
+          password: 'l',
+          database: 'messaging_app',
+        })
+        await con.promise().execute("INSERT INTO Profilepicture (Email,Picture) values (?,?)",[email,dp]);
+        con.end();
+
+
         const sessionid = await createsession(email);
 	    console.log("created session for",email);
           cookies.set("access","true",{ maxAge : 604800,httpOnly: true,secure:true});
