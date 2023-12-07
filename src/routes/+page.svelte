@@ -303,7 +303,7 @@ let func4 = (e) => {
 	margin-top: 10vh;
 	margin-bottom: 10vh;
 	position: absolute;
-	left:270px;
+	left:310px;
 	right: 0px;
 	overflow: auto;
 	padding: 10px;
