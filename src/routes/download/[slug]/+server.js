@@ -5,7 +5,7 @@ export async function GET({ request, params }) {
 
 
     const con = createConnection({
-        host: 'localhost',
+        host: 'https://chat.skapi.online/db',
         user: 'root',
         password: 'l',
         database: 'messaging_app',

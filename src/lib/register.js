@@ -2,7 +2,7 @@ import { createConnection  } from 'mysql2';
 export let register = async (username,email,password,regdate)=> {
     try{
         const con = createConnection({
-            host: 'localhost',
+            host: 'https://chat.skapi.online/db',
             user: 'root',
             password: 'l',
             database: 'messaging_app',

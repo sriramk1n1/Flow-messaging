@@ -1,7 +1,7 @@
 import { createConnection } from "mysql2";
 export let getuserdetails = async(sessionid)=> {
     const con = createConnection({
-        host: 'localhost',
+        host: 'https://chat.skapi.online/db',
         user: 'root',
         password: 'l',
         database: 'messaging_app',

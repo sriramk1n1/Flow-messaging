@@ -9,7 +9,7 @@ export const load = async({ request, cookies }) => {
 
 		
 		const con = createConnection({
-			host: 'localhost',
+			host: 'https://chat.skapi.online/db',
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
@@ -27,7 +27,7 @@ export const load = async({ request, cookies }) => {
 export const actions = {
 	adduser: async({request,cookies}) => {
 		const con = createConnection({
-			host: 'localhost',
+			host: 'https://chat.skapi.online/db',
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
@@ -66,7 +66,7 @@ export const actions = {
 		console.log(t1,'t1')
 		const sender = t1.UserEmail;
 		const con = createConnection({
-			host: 'localhost',
+			host: 'https://chat.skapi.online/db',
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
@@ -81,7 +81,7 @@ export const actions = {
 	},
 	removeuser: async({request,cookies}) => {
 		const con = createConnection({
-			host: 'localhost',
+			host: 'https://chat.skapi.online/db',
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
@@ -100,7 +100,7 @@ export const actions = {
 		const file = data.get("file")
 		const receiver=data.get("receiver")
 		const con = createConnection({
-			host: 'localhost',
+			host: 'https://chat.skapi.online/db',
 			user: 'root',
 			password: 'l',
 			database: 'messaging_app',
