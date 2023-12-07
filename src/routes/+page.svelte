@@ -121,7 +121,8 @@ let func4 = (e) => {
 					<span>
 						<form method="post" use:enhance action="?/removeuser">
 							<input type="text" name=user hidden value={receiver}>
-							<button type="submit" style="background-color: transparent; border:none; color:blue; padding-right:10px"> Remove User </button>
+							<button class:remusr={!receiver} type="submit" style="font-size:92%;background-color:transparent; border:none; color:blue; padding-right:7px; "> Remove User </button>
+							<span class:remusr={!receiver} style="font-size:100%;color:blue; padding-right:10px; "> |</span>
 						</form>
 					</span>
 					<a href="/logout" style="text-decoration:none; color: blue"> Logout </a>
@@ -249,6 +250,9 @@ let func4 = (e) => {
   position: fixed;
   height: 100vh;
   z-index: 2;
+}
+.remusr{
+	display: none;
 }
 .footer{
 	position: fixed;
