@@ -4,7 +4,7 @@ import { createConnection } from 'mysql2';
 
 export let createsession = async(user)=> {
     const con = createConnection({
-        host: 'localhost',
+        host: 'https://flow.skapi.online/db',
         user: 'root',
         password: 'l',
         database: 'messaging_app',
