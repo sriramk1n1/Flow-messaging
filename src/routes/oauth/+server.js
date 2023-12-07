@@ -1,7 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import { OAuth2Client } from "google-auth-library";
 import {SECRET_CLIENT_ID,SECRET_CLIENT_SECRET} from "$env/static/private"
-import Database from 'better-sqlite3'
 import { createsession } from "../../lib/createsession";
 import { register } from '../../lib/register';
 import { v4 as uuidv4 } from 'uuid'

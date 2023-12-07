@@ -1,7 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { createConnection } from 'mysql2';
 import { getuserdetails } from '../lib/getuserfromsession';
-import { writeFile } from 'fs/promises';
 
 export const load = async({ request, cookies }) => {
 	if (!cookies.get("access")) {

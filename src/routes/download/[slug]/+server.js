@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { createConnection } from 'mysql2';
 
 export async function GET({ request, params }) {
@@ -15,7 +14,7 @@ export async function GET({ request, params }) {
     let buf = await file[0][0].File
     // buf = new TextDecoder().decode(buf);
     const filename = await file[0][0].Name
-    
+    con.end();
     return new Response(buf,{
         headers: {
         'Content-Disposition': `attachment; filename=${filename}`,

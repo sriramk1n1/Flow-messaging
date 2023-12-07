@@ -14,7 +14,7 @@
 	let inputfile;
 	let filesubmit;
 	onMount(()=>{
-		ws = new WebSocket('ws://localhost:9000');
+		ws = new WebSocket('wss://chat.skapi.online/ws');
 		ws.onmessage = (event) => {
       	let d = JSON.parse(event.data);
 		if (d?.type=="online"){
@@ -31,7 +31,6 @@
 const scrollToBottom = async (node) => {
     node.scroll({ bottom: node.scrollHeight, behavior: 'smooth' });
   }; 
-
 
 
 let func4 = (e) => {
@@ -94,11 +93,13 @@ let func4 = (e) => {
 						}
 						} class:selected={receiver == obj.Receiver}>
 						  <div class="user-avatar">
+							<img style="border-radius: 30px; border:#007bff 1px solid" src="profile.jpg" height=50px width=50px>
+
 							<!-- <img src="user-avatar.jpg" alt="User Avatar"> -->
 						  </div>
 						  <div class="user-info">
-							<p class="user-name">{obj.Receiver}</p>
-							<p class:online={onlineusers?.includes(obj.Receiver)} class:offline={!(onlineusers?.includes(obj.Receiver))}>{onlineusers?.includes(obj.Receiver)?"Online":"Offline"}</p>
+							<p class="user-name" style="padding-left:10px">{obj.Receiver}</p>
+							<p style="padding-left:10px" class:online={onlineusers?.includes(obj.Receiver)} class:offline={!(onlineusers?.includes(obj.Receiver))}>{onlineusers?.includes(obj.Receiver)?"Online":"Offline"}</p>
 						  </div>
 						</div>
 					</div>
@@ -130,7 +131,12 @@ let func4 = (e) => {
 					{#each conversation || [] as obj}
 					{#if obj.Message.startsWith("Document") && obj.Sender==sender}
 					<div class="Component" style=" margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background: #DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
-						<div class="Component" style="color: #10363F; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}<button id={obj.CId} on:click={(e)=>{
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<div class="Component" style="color: #10363F; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}<img src="download.png" height="30px" width="40px"
+						style="padding-left:20px; padding-top:10px"
+						id={obj.CId} on:click={(e)=>{
 							const cid= e.target.id
 							const anchor = document.createElement('a');
 							anchor.href = `/download/${cid}`;
@@ -138,19 +144,24 @@ let func4 = (e) => {
 							document.body.appendChild(anchor);
 							anchor.click();
 							document.body.removeChild(anchor); 
-						}}>Download</button></div>
+						}}></div>
 					</div>
-					{:else if obj.Message.startsWith("Document") && obj.Sender==receiver}
+					{:else if obj.Message.startsWith("Document") && obj.Receiver==sender}
+					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 					<div class="Properties" style="margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; align-self:flex-start; background: #FBC8C4; border-top-left-radius: 20px; border-top-right-radius: 80px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
-						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}<button id={obj.CId} on:click={(e)=>{
-							const cid= e.target.id
-							const anchor = document.createElement('a');
-							anchor.href = `/download/${cid}`;
-							anchor.target = '_blank'; // Open link in a new tab/window
-							document.body.appendChild(anchor);
-							anchor.click();
-							document.body.removeChild(anchor); 
-						}}>Download</button></div>
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<div class="Properties" style="text-align: center; color: #700B0B; font-size: 18px; font-family: DM Sans; font-weight: 700;  word-wrap: break-word">{obj.Message}<img src="download.png" height="30px" width="40px"
+							style="padding-left:20px; padding-top:10px"
+							id={obj.CId} on:click={(e)=>{
+								const cid= e.target.id
+								const anchor = document.createElement('a');
+								anchor.href = `/download/${cid}`;
+								anchor.target = '_blank'; // Open link in a new tab/window
+								document.body.appendChild(anchor);
+								anchor.click();
+								document.body.removeChild(anchor); 
+							}}></div>
 					</div>
 					{:else if obj.Sender==sender}
 					<div class="Component" style=" margin: 10px; width: auto; height: auto; padding-top: 10px; padding-bottom: 20px; padding-left: 60px; padding-right: 60px; background:#DFF4F9; border-top-left-radius: 80px; border-top-right-radius: 20px; border-bottom-right-radius: 80px; border-bottom-left-radius: 80px;">
@@ -200,15 +211,14 @@ let func4 = (e) => {
 				</div>
 				
 			</form>
-			<form method="post" enctype="multipart/form-data" use:enhance={() => {
-
+			<form method="post" enctype="multipart/form-data" use:enhance={({formData}) => {
+					formData.set("receiver",receiver);
 				return async ({ update }) => {
 					update();
 					ws.send(JSON.stringify({receiver,sender}));
 				};
 			}} action="?/document">
 				<input type="file" name="file" hidden bind:this={inputfile} on:change={()=>{filesubmit.click();}}>
-				<input type="text" name="receiver" bind:value={receiver} hidden>
 				<button type="submit" hidden bind:this={filesubmit}></button>
 			</form>
 			</div>		
