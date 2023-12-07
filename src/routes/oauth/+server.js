@@ -6,7 +6,7 @@ import { register } from '../../lib/register';
 import { v4 as uuidv4 } from 'uuid';
 import { createConnection } from "mysql2";
 import fs from 'fs';
-
+import {DB_URL} from '$env/static/private';
 
 
 export const GET = async ({url,cookies}) => {
@@ -32,7 +32,7 @@ export const GET = async ({url,cookies}) => {
           password: 'l',
           database: 'messaging_app',
         })
-        await con.promise().execute("INSERT INTO Profilepicture (Email,Picture) values (?,?)",[email,dp]);
+        await con.promise().execute("INSERT IGNORE INTO Profilepicture (Email,Picture) values (?,?)",[email,dp]);
         con.end();
 
 
